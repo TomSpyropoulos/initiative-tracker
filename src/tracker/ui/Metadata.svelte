@@ -4,7 +4,7 @@
     import Difficulty from "./Difficulty.svelte";
     import { getRpgSystem } from "src/utils";
 
-    const { state, name, round, party, difficulty } = tracker;
+    const { state, name, round, party, difficulty, data } = tracker;
 
     const plugin = getContext("plugin");
     const rpgSystem = getRpgSystem(plugin);
@@ -23,7 +23,7 @@
             >
         {/if}
     </div>
-    {#if $dif}
+    {#if $dif && $data.displayDifficultyInTracker}
         <Difficulty />
     {/if}
     {#if $party}
