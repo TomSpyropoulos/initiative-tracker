@@ -5,6 +5,7 @@ export interface CreatureState extends HomebrewCreature {
     currentHP: number;
     tempHP: number;
     currentAC: number | string;
+    currentSTR?: number | string;
     initiative: number;
     static: boolean;
     player: boolean;
@@ -31,6 +32,7 @@ export interface HomebrewCreature {
     display?: string;
     hp?: number;
     ac?: number | string;
+    str?: number | string;
     stats?: number[];
     source?: string | string[];
     cr?: number | string;

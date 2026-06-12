@@ -200,6 +200,25 @@ export default class Logger {
                     );
                 }
             }
+            if (message.str) {
+                if (perCreature.length && !message.status) {
+                    perCreature.push("and");
+                } else if (perCreature.length) {
+                    perCreature.push(",");
+                }
+
+                if (message.str_add) {
+                    perCreature.push(
+                        `${message.name} added ${message.str} to STR`
+                    );
+                } else {
+                    perCreature.push(
+                        `${message.name} STR set to ${
+                            message.str ? message.str : "be blank"
+                        }`
+                    );
+                }
+            }
             if (message.status) {
                 if (perCreature.length) {
                     perCreature.push("and");

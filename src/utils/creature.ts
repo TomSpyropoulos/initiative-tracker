@@ -25,6 +25,8 @@ export class Creature {
     ac: number | string;
     current_ac: number | string;
     dirty_ac: boolean;
+    str: number | string;
+    current_str: number | string;
     note: string;
     enabled: boolean = true;
     hidden: boolean = false;
@@ -78,6 +80,7 @@ export class Creature {
         this.setModifier(creature.modifier);
         this.current_ac = this.ac = creature.ac ?? undefined;
         this.dirty_ac = false;
+        this.current_str = this.str = creature.str ?? undefined;
         this.max = this.current_max = creature.hp ? Number(creature.hp) : 0;
         this.note = creature.note;
         this.level = creature.level;
@@ -163,6 +166,8 @@ export class Creature {
         yield this.hit_dice;
         yield this.current_ac;
         yield this.rollHP;
+        yield this.str;
+        yield this.current_str;
     }
 
     static new(creature: Creature) {
@@ -202,6 +207,7 @@ export class Creature {
         if (this.hp > this.max) this.hp = this.max;
 
         this.current_ac = this.ac = creature.ac ?? undefined;
+        this.current_str = this.str = creature.str ?? undefined;
         this.note = creature.note;
         this.level = creature.level;
         this.player = creature.player;
@@ -227,6 +233,8 @@ export class Creature {
             cr: this.cr,
             ac: this.ac,
             currentAC: this.current_ac,
+            str: this.str,
+            currentSTR: this.current_str,
             note: this.note,
             path: this.path,
             id: this.id,
@@ -263,6 +271,7 @@ export class Creature {
         creature.current_max = state.currentMaxHP;
         creature.hp = state.currentHP;
         creature.current_ac = state.currentAC;
+        creature.current_str = state.currentSTR ?? creature.str;
         let statuses: Condition[] = [];
         for (const status of state.status) {
             const existing = Conditions.find(({ name }) => status == name);

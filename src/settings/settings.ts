@@ -174,6 +174,19 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 });
             });
         new Setting(containerEl)
+            .setName("Display STR in Tracker")
+            .setDesc(
+                "Display the Strength score column in the initiative tracker view."
+            )
+            .addToggle((t) => {
+                t.setValue(this.plugin.data.displaySTRInTracker).onChange(
+                    async (v) => {
+                        this.plugin.data.displaySTRInTracker = v;
+                        await this.plugin.saveSettings();
+                    }
+                );
+            });
+        new Setting(containerEl)
             .setName("Roll Equivalent Creatures Together")
             .setDesc(
                 "Equivalent creatures (same Name and AC) will roll the same initiative by default."
@@ -1191,6 +1204,12 @@ class NewPlayerModal extends Modal {
             t.setValue(`${this.player.ac ?? ""}`);
             t.onChange((v) => {
                 this.player.ac = v;
+            });
+        });
+        new Setting(contentEl).setName("Strength Score").addText((t) => {
+            t.setValue(`${this.player.str ?? ""}`);
+            t.onChange((v) => {
+                this.player.str = v;
             });
         });
         new Setting(contentEl)

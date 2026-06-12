@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ExtraButtonComponent, TextComponent, setIcon } from "obsidian";
     import type InitiativeTracker from "src/main";
-    import { AC, HP, REMOVE, TAG } from "src/utils";
+    import { AC, HP, REMOVE, STR, TAG } from "src/utils";
     import { ConditionSuggestionModal } from "src/utils/suggester";
     import { getContext } from "svelte";
     import { getId } from "src/utils/creature";
@@ -18,6 +18,9 @@
     };
     const acIcon = (node: HTMLElement) => {
         setIcon(node, AC);
+    };
+    const strIcon = (node: HTMLElement) => {
+        setIcon(node, STR);
     };
     const tagIcon = (node: HTMLElement) => {
         setIcon(node, TAG);
@@ -37,6 +40,7 @@
     };
     let damage: string = "";
     let ac: string = "";
+    let str: string = "";
     let status: string = null;
     $: {
         if (statusBtn) statusBtn.setDisabled(!status);
@@ -89,12 +93,12 @@
             addStatus();
         });
     };
-    function init(el: HTMLInputElement, target: "hp" | "ac") {
+    function init(el: HTMLInputElement, target: "hp" | "ac" | "str") {
         if ($updateTarget == target) el.focus();
     }
     const performUpdate = (perform: boolean) => {
         if (perform) {
-            tracker.doUpdate(damage ?? "", $statuses, ac);
+            tracker.doUpdate(damage ?? "", $statuses, ac, [], str);
         } else {
             tracker.clearUpdate();
         }
@@ -102,6 +106,7 @@
         damage = null;
         status = null;
         ac = null;
+        str = null;
         $statuses = [];
         modal = null;
 
@@ -200,7 +205,7 @@
                     {/if}
                 </div>
             </div>
-        {:else}
+        {:else if $updateTarget == "ac"}
             <div class="hp-status">
                 {#if plugin.data.beginnerTips}
                     <small class="label"> Set AC </small>
@@ -228,6 +233,37 @@
                             }
                         }}
                         use:init={"ac"}
+                    />
+                </div>
+            </div>
+        {:else if $updateTarget == "str"}
+            <div class="hp-status">
+                {#if plugin.data.beginnerTips}
+                    <small class="label"> Set STR </small>
+                {/if}
+                <div class="input">
+                    <tag
+                        use:strIcon
+                        aria-label="Set or (+/-)modify the STR of creatures"
+                        style="margin: 0 0.2rem 0 0.7rem"
+                    />
+                    <input
+                        type="text"
+                        bind:value={str}
+                        on:focus={function () {
+                            // Resolves bug caused by condition select modal not closing
+                            modal = null;
+                        }}
+                        on:keydown={function (evt) {
+                            if (evt.key == "Tab") {
+                                return true;
+                            }
+                            if (evt.key == "Enter" || evt.key == "Escape") {
+                                performUpdate(evt.key == "Enter");
+                                return;
+                            }
+                        }}
+                        use:init={"str"}
                     />
                 </div>
             </div>

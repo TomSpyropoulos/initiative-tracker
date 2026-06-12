@@ -57,6 +57,7 @@ export const DEFAULT_SETTINGS: InitiativeTrackerData = {
     beginnerTips: true,
     displayDifficulty: true,
     displayDifficultyInTracker: true,
+    displaySTRInTracker: true,
     encounters: {},
     warnedAboutImports: false,
     openState: {

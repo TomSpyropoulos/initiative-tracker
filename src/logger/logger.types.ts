@@ -10,4 +10,6 @@ export interface UpdateLogMessage {
     unc: boolean;
     ac: string;
     ac_add: boolean;
+    str: string;
+    str_add: boolean;
 }

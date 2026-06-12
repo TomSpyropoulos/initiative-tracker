@@ -3,7 +3,7 @@
 
     import CreatureTemplate from "./Creature.svelte";
 
-    import { AC, DICE, HP, META_MODIFIER } from "src/utils";
+    import { AC, DICE, HP, META_MODIFIER, STR } from "src/utils";
     import { Creature, getId } from "src/utils/creature";
     import { createEventDispatcher } from "svelte";
     import { dndzone } from "svelte-dnd-action";
@@ -14,7 +14,7 @@
     import { getContext } from "svelte";
 
     const plugin = getContext<InitiativeTracker>("plugin");
-    const { state, ordered } = tracker;
+    const { state, ordered, data } = tracker;
 
     $: items = [...$ordered].map((c) => {
         return { creature: c, id: getId() };
@@ -27,6 +27,9 @@
     };
     const acIcon = (node: HTMLElement) => {
         setIcon(node, AC);
+    };
+    const strIcon = (node: HTMLElement) => {
+        setIcon(node, STR);
     };
     const flipDurationMs = 300;
     function handleDndConsider(
@@ -74,9 +77,12 @@
                 aria-label="Re-Roll Initiatives"
                 on:click={(evt) => tracker.roll(plugin)}
             />
-            <th class="left" style="width:55%">Name</th>
+            <th class="left" style="width:{$data.displaySTRInTracker ? 40 : 55}%">Name</th>
             <th style="width:15%" use:hpIcon class="center" />
             <th style="width:15%" use:acIcon class="center" />
+            {#if $data.displaySTRInTracker}
+                <th style="width:15%" use:strIcon class="center" />
+            {/if}
             <th style="width:5%" />
         </thead>
         <tbody

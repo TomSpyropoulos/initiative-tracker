@@ -35,6 +35,8 @@ type CreatureUpdate = {
     hp?: number;
     ac?: number | string;
     current_ac?: number | string;
+    str?: number | string;
+    current_str?: number | string;
     initiative?: number;
     name?: string;
     marker?: string;
@@ -53,7 +55,7 @@ const modifier = Platform.isMacOS ? "Meta" : "Control";
 function createTracker() {
     const creatures = writable<Creature[]>([]);
     const updating = writable<Map<Creature, HPUpdate>>(new Map());
-    const updateTarget = writable<"ac" | "hp">();
+    const updateTarget = writable<"ac" | "hp" | "str">();
     const { subscribe, set, update } = creatures;
 
     const $logFile = writable<TFile | null>();
@@ -239,6 +241,9 @@ function createTracker() {
             }
             if (change.ac) {
                 creature.current_ac = creature.ac = change.ac;
+            }
+            if (change.str) {
+                creature.current_str = creature.str = change.str;
             }
             if (change.temp) {
                 let baseline = 0;
@@ -438,6 +443,18 @@ function createTracker() {
                     ) {
                         creature.current_ac = change.ac;
                     }
+                    if (
+                        typeof change.str == "string" ||
+                        !isNaN(Number(change.str))
+                    ) {
+                        creature.str = creature.current_str = change.str;
+                    }
+                    if (
+                        typeof change.current_str == "string" ||
+                        !isNaN(Number(change.current_str))
+                    ) {
+                        creature.current_str = change.current_str;
+                    }
                     if (!isNaN(Number(change.initiative))) {
                         creature.initiative = change.initiative;
                     }
@@ -495,7 +512,8 @@ function createTracker() {
             toAddString: string,
             statuses: Condition[],
             ac: string,
-            removeStatuses: Condition[] = []
+            removeStatuses: Condition[] = [],
+            str: string = ""
         ) =>
             updating.update((updatingCreatures) => {
                 const messages: UpdateLogMessage[] = [];
@@ -522,7 +540,9 @@ function createTracker() {
                         saved: false,
                         unc: false,
                         ac: null,
-                        ac_add: false
+                        ac_add: false,
+                        str: null,
+                        str_add: false
                     };
 
                     if (toAddString.charAt(0) == "t") {
@@ -576,6 +596,26 @@ function createTracker() {
                             );
                         }
                         message.ac = ac.slice(Number(ac.charAt(0) == "\\"));
+                    }
+                    if (str) {
+                        if (str.charAt(0) == "+" || str.charAt(0) == "-") {
+                            const current_str = parseInt(
+                                String(creature.current_str)
+                            );
+                            if (isNaN(current_str)) {
+                                creature.current_str =
+                                    creature.current_str + str;
+                            } else {
+                                creature.current_str =
+                                    current_str + parseInt(str);
+                            }
+                            message.str_add = true;
+                        } else {
+                            creature.current_str = str.slice(
+                                Number(str.charAt(0) == "\\")
+                            );
+                        }
+                        message.str = str.slice(Number(str.charAt(0) == "\\"));
                     }
                     messages.push(message);
                     updates.push({ creature, change });
@@ -1196,6 +1236,9 @@ class Tracker {
             if (change.ac) {
                 creature.current_ac = creature.ac = change.ac;
             }
+            if (change.str) {
+                creature.current_str = creature.str = change.str;
+            }
             if (change.temp) {
                 let baseline = 0;
                 if (this.#data.additiveTemp) {
@@ -1293,7 +1336,9 @@ class Tracker {
                     saved: false,
                     unc: false,
                     ac: null,
-                    ac_add: false
+                    ac_add: false,
+                    str: null,
+                    str_add: false
                 };
 
                 if (toAddString.charAt(0) == "t") {

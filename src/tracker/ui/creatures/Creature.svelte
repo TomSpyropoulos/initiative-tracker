@@ -9,7 +9,7 @@
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
-    const { updateTarget } = tracker;
+    const { updateTarget, data } = tracker;
 
     export let creature: Creature;
     $: statuses = creature.status;
@@ -113,7 +113,7 @@
     on:click|stopPropagation={(evt) => {
         const prev = $updateTarget;
         $updateTarget = "hp";
-        if (prev == "ac") return;
+        if (prev == "ac" || prev == "str") return;
         tracker.setUpdate(creature, evt);
     }}
 >
@@ -128,7 +128,7 @@
     on:click|stopPropagation={(evt) => {
         const prev = $updateTarget;
         $updateTarget = "ac";
-        if (prev == "hp") return;
+        if (prev == "hp" || prev == "str") return;
         tracker.setUpdate(creature, evt);
     }}
 >
@@ -139,6 +139,26 @@
         {creature.current_ac ? creature.current_ac : DEFAULT_UNDEFINED}
     </div>
 </td>
+
+{#if $data.displaySTRInTracker}
+    <td
+        class="center str-container creature-adder"
+        class:mobile={Platform.isMobile}
+        on:click|stopPropagation={(evt) => {
+            const prev = $updateTarget;
+            $updateTarget = "str";
+            if (prev == "hp" || prev == "ac") return;
+            tracker.setUpdate(creature, evt);
+        }}
+    >
+        <div
+            class:dirty-ac={creature.current_str != creature.str}
+            aria-label={creature.current_str != creature.str ? `${creature.str}` : ""}
+        >
+            {creature.current_str ?? DEFAULT_UNDEFINED}
+        </div>
+    </td>
+{/if}
 
 <td class="controls-container">
     <CreatureControls
