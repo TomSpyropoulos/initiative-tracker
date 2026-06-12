@@ -13,16 +13,18 @@
 </script>
 
 <div class="initiatie-tracker-metadata">
-    <div class="initiative-tracker-name-container">
-        {#if $name && $name.length}
-            <h2 class="initiative-tracker-name">{$name}</h2>
-        {/if}
-        {#if $dif?.difficulty?.value > 0}
-            <span class="initiative-tracker-xp encounter-xp"
-                >{rpgSystem.formatDifficultyValue($dif?.difficulty?.value, true)}</span
-            >
-        {/if}
-    </div>
+    {#if ($name && $name.length) || $dif?.difficulty?.value > 0}
+        <div class="initiative-tracker-name-container">
+            {#if $name && $name.length}
+                <h2 class="initiative-tracker-name">{$name}</h2>
+            {/if}
+            {#if $dif?.difficulty?.value > 0}
+                <span class="initiative-tracker-xp encounter-xp"
+                    >{rpgSystem.formatDifficultyValue($dif?.difficulty?.value, true)}</span
+                >
+            {/if}
+        </div>
+    {/if}
     {#if $dif && $data.displayDifficultyInTracker}
         <Difficulty />
     {/if}
