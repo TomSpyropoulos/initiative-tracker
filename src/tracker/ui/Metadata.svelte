@@ -17,7 +17,7 @@
         {#if $name && $name.length}
             <h2 class="initiative-tracker-name">{$name}</h2>
         {/if}
-        {#if $dif?.difficulty?.value > 0}
+        {#if $dif?.difficulty?.value > 0 && $data.displayDifficultyInTracker}
             <span class="initiative-tracker-xp encounter-xp"
                 >{rpgSystem.formatDifficultyValue($dif?.difficulty?.value, true)}</span
             >
